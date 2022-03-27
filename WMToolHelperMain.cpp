@@ -50,10 +50,10 @@ void WMToolHelperDialog::OnButtonRefreshCom( wxCommandEvent& event )
         //检测串口
         for(size_t i=0;i<255;i++)
         {
-            int fd=wxOpen(wxString::Format("\\\\.\\COM%d",i),O_RDWR,0755);
+            int fd=wxOpen(wxString::Format("\\\\.\\COM%d",(int)i),O_RDWR,0755);
             if(fd>=0)
             {
-                choices.Add(wxString::Format("COM%d",i));
+                choices.Add(wxString::Format("COM%d",(int)i));
                 wxClose(fd);
             }
         }
@@ -63,10 +63,10 @@ void WMToolHelperDialog::OnButtonRefreshCom( wxCommandEvent& event )
         //检测串口(仅USB转串口)
         for(size_t i=0;i<255;i++)
         {
-            int fd=wxOpen(wxString::Format("/dev/ttyUSB%d",i),O_RDWR,0755);
+            int fd=wxOpen(wxString::Format("/dev/ttyUSB%d",(int)i),O_RDWR,0755);
             if(fd>=0)
             {
-                choices.Add(wxString::Format("ttyUSB%d",i));
+                choices.Add(wxString::Format("ttyUSB%d",(int)i));
                 wxClose(fd);
             }
         }
@@ -146,8 +146,8 @@ void WMToolHelperDialog::OnButtonStart( wxCommandEvent& event )
         debugspeed.ToCLong(&i);
         if(i >= 1200 && i < 2000000)
         {
-            wxLogMessage(_T("启用调试:")+wxString::Format("%d",i));
-            cmd+=(wxString("-ws ")+wxString::Format("%d",i)+" ");
+            wxLogMessage(_T("启用调试:")+wxString::Format("%d",(int)i));
+            cmd+=(wxString("-ws ")+wxString::Format("%d",(int)i)+" ");
 
             wxString debug_type=m_choice_debugtype->GetString(m_choice_debugtype->GetSelection());
             wxLogMessage(_T("调试格式:")+debug_type);
