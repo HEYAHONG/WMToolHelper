@@ -16,7 +16,7 @@ MAINICON ICON "window_resources.ico"
         BLOCK "040904b0"
         BEGIN
             VALUE "CompanyName", "成都伟智电联科技有限公司"
-            VALUE "FileDescription", "WMToolHelperl "
+            VALUE "FileDescription", "WMToolHelper "
             VALUE "FileVersion", VERSIONSTR
             VALUE "InternalName", "WMToolHelper By HYH"
             VALUE "LegalCopyright", "Copyright cdwzdl.cn"
