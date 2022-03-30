@@ -25,11 +25,35 @@ WMToolHelperDialog::WMToolHelperDialog(wxDialog *dlg)
     : GUIDialog(dlg)
 {
 
+    {
+        //设置环境变量
+        wxString PATH;
+        if(wxGetEnv(_T("PATH"),&PATH))
+        {
+#ifdef WIN32
+            PATH+=_T(";.");
+#else
+            PATH+=_T(":.");
+#endif // WIN32
+            wxSetEnv(_T("PATH"),PATH);
+
+        }
+    }
+
+
     wxLog::EnableLogging(true);
     {
         //设置日志窗口
         wxLogTextCtrl *logger=new wxLogTextCtrl(m_textCtrl_log);
         wxLog::SetActiveTarget(logger);
+    }
+    {
+        //检测wm_tool是否存在
+        if(wxExecute(_T("wm_tool -v"),wxEXEC_SYNC|wxEXEC_HIDE_CONSOLE)!=0)
+        {
+            wxMessageBox(_T("未找到wm_tool,请检查安装!"),_T("警告"));
+            Close();
+        }
     }
     flashprocess=NULL;
     wxLogMessage(_T("程序已启动!"));
