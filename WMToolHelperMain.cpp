@@ -72,7 +72,7 @@ void WMToolHelperDialog::OnButtonRefreshCom( wxCommandEvent& event )
 #ifdef WIN32
     {
         //检测串口
-        for(size_t i=0;i<255;i++)
+        for(size_t i=0; i<255; i++)
         {
             int fd=wxOpen(wxString::Format("\\\\.\\COM%d",(int)i),O_RDWR,0755);
             if(fd>=0)
@@ -85,7 +85,7 @@ void WMToolHelperDialog::OnButtonRefreshCom( wxCommandEvent& event )
 #else
     {
         //检测串口(仅USB转串口)
-        for(size_t i=0;i<255;i++)
+        for(size_t i=0; i<255; i++)
         {
             int fd=wxOpen(wxString::Format("/dev/ttyUSB%d",(int)i),O_RDWR,0755);
             if(fd>=0)
@@ -94,8 +94,8 @@ void WMToolHelperDialog::OnButtonRefreshCom( wxCommandEvent& event )
                 wxClose(fd);
             }
         }
-	//检测串口(仅USB转串口(cdc_acm模式))
-        for(size_t i=0;i<255;i++)
+        //检测串口(仅USB转串口(cdc_acm模式))
+        for(size_t i=0; i<255; i++)
         {
             int fd=wxOpen(wxString::Format("/dev/ttyACM%d",(int)i),O_RDWR,0755);
             if(fd>=0)
@@ -104,8 +104,8 @@ void WMToolHelperDialog::OnButtonRefreshCom( wxCommandEvent& event )
                 wxClose(fd);
             }
         }
-	//检测串口(一般串口)
-        for(size_t i=0;i<255;i++)
+        //检测串口(一般串口)
+        for(size_t i=0; i<255; i++)
         {
             int fd=wxOpen(wxString::Format("/dev/ttyS%d",(int)i),O_RDWR,0755);
             if(fd>=0)
@@ -123,7 +123,7 @@ void WMToolHelperDialog::OnButtonRefreshCom( wxCommandEvent& event )
     m_comboBox_com->SetSelection(0);
 
     {
-        for(size_t i=0;i<choices.size();i++)
+        for(size_t i=0; i<choices.size(); i++)
         {
             if(choices[i]==selectedcom)
             {
