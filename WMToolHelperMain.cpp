@@ -94,6 +94,27 @@ void WMToolHelperDialog::OnButtonRefreshCom( wxCommandEvent& event )
                 wxClose(fd);
             }
         }
+	//检测串口(仅USB转串口(cdc_acm模式))
+        for(size_t i=0;i<255;i++)
+        {
+            int fd=wxOpen(wxString::Format("/dev/ttyACM%d",(int)i),O_RDWR,0755);
+            if(fd>=0)
+            {
+                choices.Add(wxString::Format("ttyACM%d",(int)i));
+                wxClose(fd);
+            }
+        }
+	//检测串口(一般串口)
+        for(size_t i=0;i<255;i++)
+        {
+            int fd=wxOpen(wxString::Format("/dev/ttyS%d",(int)i),O_RDWR,0755);
+            if(fd>=0)
+            {
+                choices.Add(wxString::Format("ttyS%d",(int)i));
+                wxClose(fd);
+            }
+        }
+
     }
 #endif // WIN32
 
