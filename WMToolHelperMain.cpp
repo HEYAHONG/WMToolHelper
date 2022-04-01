@@ -21,6 +21,22 @@
 #include <wx/arrstr.h>
 #include <wx/utils.h>
 
+class FlashProcess:public wxProcess
+{
+    WMToolHelperDialog &parent;
+public:
+    FlashProcess(WMToolHelperDialog &_parent):parent(_parent)
+    {
+
+    }
+protected:
+    virtual void OnTerminate(int  pid,int status)
+    {
+        wxLogMessage(_T("烧录进程%d已停止,退出代码:%d"),pid,status);
+    }
+
+};
+
 WMToolHelperDialog::WMToolHelperDialog(wxDialog *dlg)
     : GUIDialog(dlg)
 {
@@ -206,7 +222,7 @@ void WMToolHelperDialog::OnButtonStart( wxCommandEvent& event )
 
     wxLogMessage(_T("即将执行命令:")+cmd);
 
-    flashprocess=new wxProcess;
+    flashprocess=new FlashProcess(*this);
     flashprocess->Redirect();
     wxExecute(cmd,wxEXEC_ASYNC|wxEXEC_HIDE_CONSOLE,flashprocess);
     flashprocess_pid=flashprocess->GetPid();
@@ -238,7 +254,7 @@ void WMToolHelperDialog::OnRefreshTimer( wxTimerEvent& event )
             m_button_stop->Enable(false);
             auto p=flashprocess;
             flashprocess=NULL;
-            //delete p;
+            delete p;
         }
     }
 }
