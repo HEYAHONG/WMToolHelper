@@ -24,14 +24,20 @@
 class FlashProcess:public wxProcess
 {
     WMToolHelperDialog &parent;
+    int ExitCode;
 public:
     FlashProcess(WMToolHelperDialog &_parent):parent(_parent)
     {
-
+        ExitCode=0;
+    }
+    int GetExitCode()
+    {
+        return ExitCode;
     }
 protected:
     virtual void OnTerminate(int  pid,int status)
     {
+        ExitCode=status;
         wxLogMessage(_T("烧录进程%d已停止,退出代码:%d"),pid,status);
     }
 
@@ -72,6 +78,7 @@ WMToolHelperDialog::WMToolHelperDialog(wxDialog *dlg)
         }
     }
     flashprocess=NULL;
+    retry_timestamp=0;
     wxLogMessage(_T("程序已启动!"));
 }
 
@@ -252,11 +259,49 @@ void WMToolHelperDialog::OnRefreshTimer( wxTimerEvent& event )
         {
             m_button_start->Enable(true);
             m_button_stop->Enable(false);
-            auto p=flashprocess;
+            FlashProcess * p=flashprocess;
             flashprocess=NULL;
+
+            {
+                wxString debugspeed=m_textCtrl_debugspeed->GetValue();
+                long i=0;
+                debugspeed.ToCLong(&i);
+                if(i < 1200 || i > 2000000)
+                {
+                    if(m_checkBox_FlashProgressExitAbnormal->IsChecked() && (p->GetExitCode()!=0) )
+                    {
+                        wxLogMessage(_T("将在5秒后重试"));
+                        retry_timestamp=time(NULL);
+                    }
+
+                    if(m_checkBox_FlashProgressExitNormal->IsChecked() && (p->GetExitCode()==0) )
+                    {
+                        wxLogMessage(_T("将在5秒后重试"));
+                        retry_timestamp=time(NULL);
+                    }
+                }
+            }
+
             delete p;
         }
     }
+
+    //取消重试
+    if((!m_checkBox_FlashProgressExitAbnormal->IsChecked()) && (!m_checkBox_FlashProgressExitNormal->IsChecked()))
+    {
+        retry_timestamp=0;
+    }
+
+    if(retry_timestamp!=0)
+    {
+        if(time(NULL)> (retry_timestamp+5))
+        {
+            wxCommandEvent evt;
+            OnButtonStart(evt);
+            retry_timestamp=0;
+        }
+    }
+
 }
 void WMToolHelperDialog::OnButtonStop( wxCommandEvent& event )
 {
@@ -264,6 +309,10 @@ void WMToolHelperDialog::OnButtonStop( wxCommandEvent& event )
     {
         wxProcess::Kill(flashprocess->GetPid(),wxSIGKILL);
     }
+
+    //取消重试
+    m_checkBox_FlashProgressExitAbnormal->SetValue(false);
+    m_checkBox_FlashProgressExitNormal->SetValue(false);
 }
 
 void WMToolHelperDialog::OnClose(wxCloseEvent &event)

@@ -66,6 +66,9 @@ class GUIDialog : public wxDialog
 		wxPanel* m_panel_operation;
 		wxButton* m_button_start;
 		wxButton* m_button_stop;
+		wxStaticText* m_staticText_retry;
+		wxCheckBox* m_checkBox_FlashProgressExitAbnormal;
+		wxCheckBox* m_checkBox_FlashProgressExitNormal;
 		wxTimer m_timer_refresh;
 
 		// Virtual event handlers, override them in your derived class

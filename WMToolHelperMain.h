@@ -17,6 +17,9 @@
 
 
 #include "GUIDialog.h"
+#include "time.h"
+
+class FlashProcess;
 
 class WMToolHelperDialog: public GUIDialog
 {
@@ -33,7 +36,8 @@ class WMToolHelperDialog: public GUIDialog
         virtual void OnAbout(wxCommandEvent& event);
         virtual void OnRefreshTimer( wxTimerEvent& event );
 
-        wxProcess *flashprocess;
+        FlashProcess *flashprocess;
         long      flashprocess_pid;
+        time_t    retry_timestamp;//重试时间戳
 };
 #endif // WMTOOLHELPERMAIN_H
