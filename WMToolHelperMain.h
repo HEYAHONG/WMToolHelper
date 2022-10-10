@@ -26,10 +26,15 @@ class WMToolHelperDialog: public GUIDialog
     public:
         WMToolHelperDialog(wxDialog *dlg);
         ~WMToolHelperDialog();
+
+    bool FindExecutable(wxString name);
+
     protected:
         virtual void OnButtonRefreshCom( wxCommandEvent& event );
 		virtual void OnButtonStart( wxCommandEvent& event );
 		virtual void OnButtonStop( wxCommandEvent& event );
+
+
     private:
         virtual void OnClose(wxCloseEvent& event);
         virtual void OnQuit(wxCommandEvent& event);

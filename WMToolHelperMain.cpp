@@ -20,6 +20,7 @@
 #include <wx/log.h>
 #include <wx/arrstr.h>
 #include <wx/utils.h>
+#include <wx/stdpaths.h>
 
 class FlashProcess:public wxProcess
 {
@@ -47,44 +48,138 @@ WMToolHelperDialog::WMToolHelperDialog(wxDialog *dlg)
     : GUIDialog(dlg)
 {
 
-    {
-        //设置环境变量
-        wxString PATH;
-        if(wxGetEnv(_T("PATH"),&PATH))
-        {
-#ifdef WIN32
-            PATH+=_T(";.");
-#else
-            PATH+=_T(":.");
-#endif // WIN32
-            wxSetEnv(_T("PATH"),PATH);
-
-        }
-    }
-
-
     wxLog::EnableLogging(true);
     {
         //设置日志窗口
         wxLogTextCtrl *logger=new wxLogTextCtrl(m_textCtrl_log);
         wxLog::SetActiveTarget(logger);
     }
+
+    {
+        //设置环境变量
+        wxString PATH;
+        if(wxGetEnv(_T("PATH"),&PATH))
+        {
+            wxStandardPaths &paths=wxStandardPaths::Get();
+            wxString apppath=paths.GetExecutablePath();
+#ifdef WIN32
+            if(apppath.Find('\\',true)!=wxString::npos)
+            {
+                apppath=apppath.substr(0,apppath.Find('\\',true));
+            }
+            else
+            {
+                apppath=".";
+            }
+#else
+            if(apppath.Find('/',true)!=wxString::npos)
+            {
+                apppath=apppath.substr(0,apppath.Find('/',true));
+            }
+            else
+            {
+                apppath=".";
+            }
+#endif // WIN32
+            wxLogMessage(_T("程序目录:%s"),apppath);
+
+#ifdef WIN32
+            PATH=apppath+_T(";")+PATH;
+#else
+            PATH=apppath+_T(":")+PATH;
+#endif // WIN32
+            wxSetEnv(_T("PATH"),PATH);
+
+        }
+    }
+
     {
         //检测wm_tool是否存在
-        if(wxExecute(_T("wm_tool -v"),wxEXEC_SYNC|wxEXEC_HIDE_CONSOLE)!=0)
+        if(!FindExecutable(_T("wm_tool")))
         {
             wxMessageBox(_T("未找到wm_tool,请检查安装!"),_T("警告"));
             Close();
         }
     }
+
+    {
+        //检测putty是否存在
+        if(FindExecutable(_T("putty")))
+        {
+            wxLogMessage(_T("已找到putty，可使用putty调试。"));
+            m_choice_debugtype->SetSelection(3);
+        }
+        else
+        {
+            wxLogMessage(_T("未找到putty，请安装putty并添加至PATH目录。"));
+        }
+    }
     flashprocess=NULL;
     retry_timestamp=0;
+
+    {
+        wxString downloadspeed=m_choice_downloadspeed->GetString(m_choice_downloadspeed->GetSelection());
+        m_textCtrl_debugspeed->SetValue(downloadspeed);
+    }
+
     wxLogMessage(_T("程序已启动!"));
 }
 
 WMToolHelperDialog::~WMToolHelperDialog()
 {
     wxLog::SetActiveTarget(NULL);
+}
+
+bool WMToolHelperDialog::FindExecutable(wxString name)
+{
+    if(name.empty())
+    {
+        return false;
+    }
+    wxString PATH;
+    if(wxGetEnv(_T("PATH"),&PATH))
+    {
+        wxArrayString Paths;
+        while(!PATH.empty())
+        {
+#ifdef WIN32
+            auto pos=PATH.Find(";");
+#else
+            auto pos=PATH.Find(":");
+#endif // WIN32
+            if(pos!=wxString::npos)
+            {
+                Paths.push_back(PATH.substr(0,pos));
+                PATH=PATH.substr(pos+1);
+            }
+            else
+            {
+                Paths.push_back(PATH);
+                PATH="";
+            }
+        }
+
+        for(wxString Path:Paths)
+        {
+#ifdef WIN32
+            wxString exec_path=Path+"\\"+name;
+#else
+            wxString exec_path=Path+"/"+name;
+#endif // WIN32
+            exec_path.Replace("\\","/");
+            if(wxFile::Exists(exec_path))
+            {
+                return true;
+            }
+#ifdef WIN32
+            if(wxFile::Exists(exec_path+".exe"))
+            {
+                return true;
+            }
+#endif // WIN32
+        }
+    }
+    return false;
 }
 
 void WMToolHelperDialog::OnButtonRefreshCom( wxCommandEvent& event )
@@ -210,20 +305,19 @@ void WMToolHelperDialog::OnButtonStart( wxCommandEvent& event )
 
     {
         wxString debugspeed=m_textCtrl_debugspeed->GetValue();
+        wxString debug_type=m_choice_debugtype->GetString(m_choice_debugtype->GetSelection());
         long i=0;
         debugspeed.ToCLong(&i);
-        if(i >= 1200 && i < 2000000)
+        if((i >= 1200 && i < 2000000) && (debug_type=="str" || debug_type == "hex"))
         {
             wxLogMessage(_T("启用调试:")+wxString::Format("%d",(int)i));
             cmd+=(wxString("-ws ")+wxString::Format("%d",(int)i)+" ");
-
-            wxString debug_type=m_choice_debugtype->GetString(m_choice_debugtype->GetSelection());
             wxLogMessage(_T("调试格式:")+debug_type);
             cmd+=(wxString("-sl ")+debug_type+" ");
         }
         else
         {
-            wxLogMessage(_T("不启用调试!"));
+            wxLogMessage(_T("不启用WM_Tool调试!"));
         }
     }
 
@@ -242,6 +336,7 @@ void WMToolHelperDialog::OnRefreshTimer( wxTimerEvent& event )
 {
     if(flashprocess!=NULL)
     {
+        wxString debug_type=m_choice_debugtype->GetString(m_choice_debugtype->GetSelection());
         if(wxProcess::Exists(flashprocess_pid))
         {
             wxInputStream *input=flashprocess->GetInputStream();
@@ -250,7 +345,15 @@ void WMToolHelperDialog::OnRefreshTimer( wxTimerEvent& event )
                 wxString flashprocesslog;
                 while(wxProcess::Exists(flashprocess_pid) && input->CanRead())
                 {
-                    flashprocesslog+=(char)input->GetC();
+                    char i=(char)input->GetC();
+                    if(debug_type=="str")
+                    {
+                        if(i=='\r')
+                        {
+                            continue;
+                        }
+                    }
+                    flashprocesslog+=i;
                 }
                 m_textCtrl_log->AppendText(flashprocesslog);
             }
@@ -266,7 +369,7 @@ void WMToolHelperDialog::OnRefreshTimer( wxTimerEvent& event )
                 wxString debugspeed=m_textCtrl_debugspeed->GetValue();
                 long i=0;
                 debugspeed.ToCLong(&i);
-                if(i < 1200 || i > 2000000)
+                if((i < 1200 || i > 2000000) && debug_type=="nodebug")
                 {
                     if(m_checkBox_FlashProgressExitAbnormal->IsChecked() && (p->GetExitCode()!=0) )
                     {
@@ -279,6 +382,16 @@ void WMToolHelperDialog::OnRefreshTimer( wxTimerEvent& event )
                         wxLogMessage(_T("将在5秒后重试"));
                         retry_timestamp=time(NULL);
                     }
+                }
+
+                if( (i >= 1200 || i <= 2000000)&& debug_type=="putty")
+                {
+                    wxString cmd="putty ";
+                    cmd+=wxString::Format(_T(" -serial -sercfg %ld,8,n,1 "),i);
+                    wxString com=m_comboBox_com->GetStringSelection();
+                    cmd+=com;
+                    wxLogMessage(_T("即将执行命令:%s"),cmd);
+                    wxExecute(cmd);
                 }
             }
 

@@ -8,3 +8,6 @@ W600烧写辅助工具。调用W600官方工具wm_tool完成烧录。
 
 - [wxWidgets](http://wxwidgets.org/)
 
+# 截图
+
+![screenshot](bin/screenshot.png)

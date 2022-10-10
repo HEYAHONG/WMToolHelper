@@ -80,7 +80,6 @@ class GUIDialog : public wxDialog
 
 
 	public:
-		wxString debugspeed_validator;
 
 		GUIDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("WMToolHelper"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxMAXIMIZE_BOX|wxMINIMIZE_BOX|wxRESIZE_BORDER );
 		wxAuiManager m_mgr;

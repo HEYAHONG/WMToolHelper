@@ -117,10 +117,8 @@ GUIDialog::GUIDialog( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_staticText6->Wrap( -1 );
 	fgSizer1->Add( m_staticText6, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_textCtrl_debugspeed = new wxTextCtrl( m_panel_settings, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl_debugspeed = new wxTextCtrl( m_panel_settings, wxID_ANY, wxT("115200"), wxDefaultPosition, wxDefaultSize, wxTE_CENTER|wxTE_PROCESS_ENTER );
 	m_textCtrl_debugspeed->SetMinSize( wxSize( 120,-1 ) );
-
-	m_textCtrl_debugspeed->SetValidator( wxTextValidator( wxFILTER_NUMERIC, &debugspeed_validator ) );
 
 	fgSizer1->Add( m_textCtrl_debugspeed, 0, wxALL, 5 );
 
@@ -128,7 +126,7 @@ GUIDialog::GUIDialog( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_staticText7->Wrap( -1 );
 	fgSizer1->Add( m_staticText7, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
-	wxString m_choice_debugtypeChoices[] = { wxT("str"), wxT("hex") };
+	wxString m_choice_debugtypeChoices[] = { wxT("str"), wxT("hex"), wxT("nodebug"), wxT("putty") };
 	int m_choice_debugtypeNChoices = sizeof( m_choice_debugtypeChoices ) / sizeof( wxString );
 	m_choice_debugtype = new wxChoice( m_panel_settings, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choice_debugtypeNChoices, m_choice_debugtypeChoices, 0 );
 	m_choice_debugtype->SetSelection( 0 );
