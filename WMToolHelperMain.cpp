@@ -384,11 +384,14 @@ void WMToolHelperDialog::OnRefreshTimer( wxTimerEvent& event )
                     }
                 }
 
-                if( (i >= 1200 || i <= 2000000)&& debug_type=="putty")
+                if( FindExecutable(_T("putty")) && (i >= 1200 || i <= 2000000)&& debug_type=="putty" && (p->GetExitCode()==0))
                 {
                     wxString cmd="putty ";
                     cmd+=wxString::Format(_T(" -serial -sercfg %ld,8,n,1 "),i);
                     wxString com=m_comboBox_com->GetStringSelection();
+#ifndef WIN32
+                    com=wxString(_T("/dev/"))+com;
+#endif // WIN32
                     cmd+=com;
                     wxLogMessage(_T("即将执行命令:%s"),cmd);
                     wxExecute(cmd);
