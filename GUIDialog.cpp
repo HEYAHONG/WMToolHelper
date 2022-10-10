@@ -100,7 +100,7 @@ GUIDialog::GUIDialog( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_staticText4->Wrap( -1 );
 	fgSizer1->Add( m_staticText4, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_filePicker_firmware = new wxFilePickerCtrl( m_panel_settings, wxID_ANY, wxEmptyString, wxT("选择固件"), wxT("*.fls || *.FLS"), wxDefaultPosition, wxDefaultSize, wxFLP_DEFAULT_STYLE|wxFLP_FILE_MUST_EXIST|wxFLP_OPEN|wxFLP_SMALL );
+	m_filePicker_firmware = new wxFilePickerCtrl( m_panel_settings, wxID_ANY, wxEmptyString, wxT("选择固件"), wxT("*.fls;*.FLS"), wxDefaultPosition, wxDefaultSize, wxFLP_DEFAULT_STYLE|wxFLP_FILE_MUST_EXIST|wxFLP_OPEN|wxFLP_SMALL );
 	m_filePicker_firmware->SetMinSize( wxSize( 200,-1 ) );
 
 	fgSizer1->Add( m_filePicker_firmware, 0, wxALL, 5 );
