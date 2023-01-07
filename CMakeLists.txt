@@ -74,3 +74,32 @@ INSTALL(TARGETS wm_getver wm_tool
  
 ENDIF()
 
+#软件包相关
+if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+	#安装桌面快捷方式
+	install(FILES WMToolHelper.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
+	#安装桌面快捷方式图标
+	install(FILES WMToolHelper.png DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/32x32/apps)
+	if(EXISTS "/etc/issue")
+		file(READ "/etc/issue" ETC_ISSUE)
+		if(ETC_ISSUE MATCHES "Debian|Ubuntu")
+
+#打包deb软件包
+message(STATUS "this is a debian(ubuntu) system")
+set(CPACK_PACKAGE_NAME  "${PROJECT_NAME}")
+set(CPACK_PACKAGE_VERSION "1.0.0.1")
+set(CPACK_PACKAGE_VENDOR "HEYAHONG")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "WMToolHelper By HYH")
+set(CPACK_PACKAGE_DESCRIPTION "WMToolHelper By HYH")
+set(CPACK_PACKAGE_CONTACT    "2229388563@qq.com")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER    "HEYAHONG")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libwxgtk3.0-gtk3-0v5 (>=3.0.5.0),putty (>=0.70)")
+set(CPACK_DEBIAN_PACKAGE_SECTION "System;X11")
+set(CPACK_DEBIAN_PACKAGE_PRIORITY "Optional")
+set(CPACK_GENERATOR "DEB")
+include(CPack)
+
+		endif()
+	endif()
+endif()
+
