@@ -1,6 +1,7 @@
 
-
+#ifdef __GNUC__
 1  24    "window_resources.manifest"
+#endif
 MAINICON ICON "window_resources.ico"
 
 

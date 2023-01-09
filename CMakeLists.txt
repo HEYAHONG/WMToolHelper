@@ -12,11 +12,17 @@ option(STATIC_BUILD "static build" OFF)
 
 
 if(WIN32)
-	set(MAIN_LIBS "-static-libgcc -static-libstdc++")
+	if(MSVC)
+		add_compile_options(-utf-8 )
+	else()
+		set(MAIN_LIBS "-static-libgcc -static-libstdc++")
+	endif()
 endif()
 
 if(STATIC_BUILD)
-	set(MAIN_LIBS "${MAIN_LIBS} -static")
+	if(NOT MSVC)
+		set(MAIN_LIBS "${MAIN_LIBS} -static")
+	endif()
 endif()
 
 
@@ -28,8 +34,11 @@ if(WIN32)
 	list(APPEND  MAIN_SRCS ${MAIN_RC_FILES})
 endif()
 
-
-add_executable(${PROJECT_NAME} ${MAIN_SRCS})
+if(WIN32)
+	add_executable(${PROJECT_NAME} WIN32 ${MAIN_SRCS})
+else()
+	add_executable(${PROJECT_NAME} ${MAIN_SRCS})
+endif()
 target_link_libraries(${PROJECT_NAME} ${MAIN_LIBS})
 
 #添加线程库
@@ -40,7 +49,11 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME}  ${CMAKE_THREAD_LIBS_INIT})
 if(STATIC_BUILD)
         set(wxWidgets_USE_STATIC ON)
 endif()
-find_package(wxWidgets REQUIRED all )
+if(WIN32)
+	find_package(wxWidgets REQUIRED core base adv aui webview html gl richtext )
+else()
+	find_package(wxWidgets REQUIRED all)
+endif()
 include(${wxWidgets_USE_FILE})
 target_link_libraries(${PROJECT_NAME} ${wxWidgets_LIBRARIES})
 

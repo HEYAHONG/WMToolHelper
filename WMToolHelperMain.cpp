@@ -1,4 +1,4 @@
-/***************************************************************
+﻿/***************************************************************
  * Name:      WMToolHelperMain.cpp
  * Purpose:   Code for Application Frame
  * Author:    HYH (cdwzdl.cn)
