@@ -122,7 +122,7 @@ WMToolHelperDialog::WMToolHelperDialog(wxDialog *dlg)
         m_textCtrl_debugspeed->SetValue(downloadspeed);
     }
 
-    wxLogMessage(_T("程序已启动!"));
+    wxLogMessage(_T("程序已启动(版本:%s)!"),_T(PROJECT_VERSION_STR));
 }
 
 WMToolHelperDialog::~WMToolHelperDialog()

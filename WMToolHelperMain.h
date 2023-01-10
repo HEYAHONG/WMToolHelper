@@ -11,7 +11,7 @@
 #define WMTOOLHELPERMAIN_H
 
 
-
+#include "Version.h"
 #include "WMToolHelperApp.h"
 #include "wx/process.h"
 
