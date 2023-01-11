@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.1.0)
 
 project(QRencode VERSION 4.1.1 LANGUAGES C)
 
-option(WITH_TOOLS "Build utility tools"  YES )
+option(WITH_TOOLS "Build utility tools"  NO )
 option(WITH_TESTS "Build tests"  NO )
-option(WITHOUT_PNG "Disable PNG support" NO)
+option(WITHOUT_PNG "Disable PNG support" YES)
 option(GPROF "Generate extra code to write profile information" OFF)
 option(COVERAGE "Generate extra code to write coverage information" OFF)
 option(ASAN "Use AddressSanitizer" OFF)
