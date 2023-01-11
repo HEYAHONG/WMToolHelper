@@ -28,6 +28,8 @@
 #include <wx/checkbox.h>
 #include <wx/valtext.h>
 #include <wx/timer.h>
+#include <wx/bmpbuttn.h>
+#include <wx/gbsizer.h>
 #include <wx/dialog.h>
 #include <wx/aui/aui.h>
 
@@ -70,6 +72,8 @@ class GUIDialog : public wxDialog
 		wxCheckBox* m_checkBox_FlashProgressExitAbnormal;
 		wxCheckBox* m_checkBox_FlashProgressExitNormal;
 		wxTimer m_timer_refresh;
+		wxPanel* m_panel_info;
+		wxBitmapButton* m_bpButtonQrCode;
 
 		// Virtual event handlers, override them in your derived class
 		virtual void OnClose( wxCloseEvent& event ) { event.Skip(); }
@@ -77,6 +81,7 @@ class GUIDialog : public wxDialog
 		virtual void OnButtonStart( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonStop( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnRefreshTimer( wxTimerEvent& event ) { event.Skip(); }
+		virtual void OnbpButtonQrCodeClick( wxCommandEvent& event ) { event.Skip(); }
 
 
 	public:

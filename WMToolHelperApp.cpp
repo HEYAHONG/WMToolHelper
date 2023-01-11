@@ -17,11 +17,14 @@
 
 #include "WMToolHelperApp.h"
 #include "WMToolHelperMain.h"
+#include "wx/image.h"
 
 IMPLEMENT_APP(WMToolHelperApp);
 
 bool WMToolHelperApp::OnInit()
 {
+    //初始化图像处理句柄
+    wxInitAllImageHandlers();
 
     WMToolHelperDialog* dlg = new WMToolHelperDialog(0L);
     //最大化

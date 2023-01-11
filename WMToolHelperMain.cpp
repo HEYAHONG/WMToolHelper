@@ -20,7 +20,7 @@
 #include <wx/log.h>
 #include <wx/arrstr.h>
 #include <wx/utils.h>
-#include <wx/stdpaths.h>
+#include <wx/clipbrd.h>
 
 class FlashProcess:public wxProcess
 {
@@ -45,8 +45,11 @@ protected:
 };
 
 WMToolHelperDialog::WMToolHelperDialog(wxDialog *dlg)
-    : GUIDialog(dlg)
+    : GUIDialog(dlg),paths(wxStandardPaths::Get())
 {
+
+
+    SetButtonQrCode(_T("WMToolHelper"));
 
     wxLog::EnableLogging(true);
     {
@@ -60,7 +63,6 @@ WMToolHelperDialog::WMToolHelperDialog(wxDialog *dlg)
         wxString PATH;
         if(wxGetEnv(_T("PATH"),&PATH))
         {
-            wxStandardPaths &paths=wxStandardPaths::Get();
             wxString apppath=paths.GetExecutablePath();
 #ifdef WIN32
             if(apppath.Find('\\',true)!=wxString::npos)
@@ -92,6 +94,9 @@ WMToolHelperDialog::WMToolHelperDialog(wxDialog *dlg)
 
         }
     }
+
+    //打印用户数据目录
+    wxLogMessage(_T("用户数据文件目录:%s"),paths.GetUserDataDir());
 
     {
         //检测wm_tool是否存在
@@ -431,6 +436,15 @@ void WMToolHelperDialog::OnButtonStop( wxCommandEvent& event )
     m_checkBox_FlashProgressExitNormal->SetValue(false);
 }
 
+void WMToolHelperDialog::OnbpButtonQrCodeClick( wxCommandEvent& event )
+{
+    if (wxTheClipboard->Open())
+    {
+        wxTheClipboard->SetData(new wxTextDataObject(m_bpButtonQrCode->GetLabel()));
+        wxTheClipboard->Close();
+    }
+}
+
 void WMToolHelperDialog::OnClose(wxCloseEvent &event)
 {
     Destroy();
@@ -444,4 +458,49 @@ void WMToolHelperDialog::OnQuit(wxCommandEvent &event)
 void WMToolHelperDialog::OnAbout(wxCommandEvent &event)
 {
 
+}
+
+wxBitmap WMToolHelperDialog::GetQrCode(wxString data,int QrCodeDotHeight,int version, QRecLevel level, QRencodeMode hint, int casesensitive)
+{
+    QRcode *qrcode=QRcode_encodeString(data.ToStdString().c_str(),version,level,hint,casesensitive);
+    if(qrcode==NULL)
+    {
+        return wxBitmap();
+    }
+    wxMemoryDC dc;
+    wxBitmap bitmap(wxSize((qrcode->width+2)*QrCodeDotHeight,(qrcode->width+2)*QrCodeDotHeight));
+    dc.SelectObject(bitmap);
+    dc.SetBackground(*wxWHITE_BRUSH);
+    dc.Clear();
+    dc.SetBrush(*wxBLACK_BRUSH);
+    dc.SetPen(*wxBLACK_PEN);
+
+    int qrcodex=(bitmap.GetSize().GetWidth()-qrcode->width*QrCodeDotHeight)/2;
+    if(qrcodex<0)
+    {
+        qrcodex=0;
+    }
+    int qrcodey=0;
+    if(qrcodey<0)
+    {
+        qrcodey=0;
+    }
+
+    for(size_t i=0; i<qrcode->width*qrcode->width; i++)
+    {
+        if(qrcode->data[i]&0x01)
+        {
+            dc.DrawRectangle(qrcodex+(i%qrcode->width*QrCodeDotHeight),qrcodey+(i/qrcode->width*QrCodeDotHeight),QrCodeDotHeight,QrCodeDotHeight);
+        }
+    }
+    QRcode_free(qrcode);
+    dc.SelectObject(wxNullBitmap);
+    return bitmap;
+
+}
+
+void WMToolHelperDialog::SetButtonQrCode(wxString str)
+{
+    m_bpButtonQrCode->SetBitmap(GetQrCode(str));
+    m_bpButtonQrCode->SetLabel(str);
 }

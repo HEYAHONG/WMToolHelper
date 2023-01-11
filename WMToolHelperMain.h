@@ -14,35 +14,46 @@
 #include "Version.h"
 #include "WMToolHelperApp.h"
 #include "wx/process.h"
-
+#include <wx/stdpaths.h>
+#include <wx/bitmap.h>
+#include <wx/dcmemory.h>
 
 #include "GUIDialog.h"
 #include "time.h"
+#include "qrencode.h"
 
 class FlashProcess;
 
 class WMToolHelperDialog: public GUIDialog
 {
-    public:
-        WMToolHelperDialog(wxDialog *dlg);
-        ~WMToolHelperDialog();
+public:
+    WMToolHelperDialog(wxDialog *dlg);
+    ~WMToolHelperDialog();
 
     bool FindExecutable(wxString name);
 
-    protected:
-        virtual void OnButtonRefreshCom( wxCommandEvent& event );
-		virtual void OnButtonStart( wxCommandEvent& event );
-		virtual void OnButtonStop( wxCommandEvent& event );
+    wxBitmap GetQrCode(wxString data,int QrCodeDotHeight=5,int version=0, QRecLevel level=QR_ECLEVEL_H, QRencodeMode hint=QR_MODE_8, int casesensitive=1);
 
 
-    private:
-        virtual void OnClose(wxCloseEvent& event);
-        virtual void OnQuit(wxCommandEvent& event);
-        virtual void OnAbout(wxCommandEvent& event);
-        virtual void OnRefreshTimer( wxTimerEvent& event );
 
-        FlashProcess *flashprocess;
-        long      flashprocess_pid;
-        time_t    retry_timestamp;//重试时间戳
+protected:
+    virtual void OnButtonRefreshCom( wxCommandEvent& event );
+    virtual void OnButtonStart( wxCommandEvent& event );
+    virtual void OnButtonStop( wxCommandEvent& event );
+    virtual void OnbpButtonQrCodeClick( wxCommandEvent& event );
+
+
+private:
+    virtual void OnClose(wxCloseEvent& event);
+    virtual void OnQuit(wxCommandEvent& event);
+    virtual void OnAbout(wxCommandEvent& event);
+    virtual void OnRefreshTimer( wxTimerEvent& event );
+
+    FlashProcess *flashprocess;
+    long      flashprocess_pid;
+    time_t    retry_timestamp;//重试时间戳
+    wxStandardPaths &paths;
+
+    void SetButtonQrCode(wxString str);
 };
 #endif // WMTOOLHELPERMAIN_H

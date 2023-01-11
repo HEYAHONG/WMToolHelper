@@ -78,6 +78,7 @@ target_link_libraries(${PROJECT_NAME} ${wxWidgets_LIBRARIES})
 #qrencode库
 add_subdirectory(3rdparty/libqrencode EXCLUDE_FROM_ALL SYSTEM)
 target_link_libraries(${PROJECT_NAME} qrencode)
+target_include_directories(${PROJECT_NAME} PUBLIC 3rdparty/libqrencode)
 
 #安装
 INSTALL(TARGETS ${PROJECT_NAME}
