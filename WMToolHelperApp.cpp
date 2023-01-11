@@ -24,6 +24,8 @@ bool WMToolHelperApp::OnInit()
 {
 
     WMToolHelperDialog* dlg = new WMToolHelperDialog(0L);
+    //最大化
+    dlg->Maximize();
     dlg->Show();
     return true;
 }
