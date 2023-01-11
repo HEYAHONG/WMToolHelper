@@ -75,6 +75,10 @@ endif()
 include(${wxWidgets_USE_FILE})
 target_link_libraries(${PROJECT_NAME} ${wxWidgets_LIBRARIES})
 
+#qrencode库
+add_subdirectory(3rdparty/libqrencode EXCLUDE_FROM_ALL)
+target_link_libraries(${PROJECT_NAME} qrencode)
+
 #安装
 INSTALL(TARGETS ${PROJECT_NAME}
        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
