@@ -29,7 +29,7 @@
 #include <wx/valtext.h>
 #include <wx/timer.h>
 #include <wx/bmpbuttn.h>
-#include <wx/gbsizer.h>
+#include <wx/dataview.h>
 #include <wx/dialog.h>
 #include <wx/aui/aui.h>
 
@@ -74,6 +74,10 @@ class GUIDialog : public wxDialog
 		wxTimer m_timer_refresh;
 		wxPanel* m_panel_info;
 		wxBitmapButton* m_bpButtonQrCode;
+		wxDataViewListCtrl* m_dataViewListCtrl_History;
+		wxDataViewColumn* m_dataViewListColumn_History_TimeStamp;
+		wxDataViewColumn* m_dataViewListColumn_History_Mac;
+		wxDataViewColumn* m_dataViewListColumn_History_Date;
 
 		// Virtual event handlers, override them in your derived class
 		virtual void OnClose( wxCloseEvent& event ) { event.Skip(); }
@@ -86,7 +90,7 @@ class GUIDialog : public wxDialog
 
 	public:
 
-		GUIDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("WMToolHelper"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 806,606 ), long style = wxDEFAULT_DIALOG_STYLE|wxMAXIMIZE_BOX|wxMINIMIZE_BOX|wxRESIZE_BORDER );
+		GUIDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("WMToolHelper"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 800,600 ), long style = wxDEFAULT_DIALOG_STYLE|wxMAXIMIZE_BOX|wxMINIMIZE_BOX|wxRESIZE_BORDER );
 		wxAuiManager m_mgr;
 
 		~GUIDialog();

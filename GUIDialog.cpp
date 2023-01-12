@@ -184,19 +184,23 @@ GUIDialog::GUIDialog( wxWindow* parent, wxWindowID id, const wxString& title, co
 
 	m_mgr.AddPane( m_panel_info, wxAuiPaneInfo() .Bottom() .CloseButton( false ).PaneBorder( false ).Dock().Resizable().FloatingSize( wxSize( 200,200 ) ).TopDockable( false ).LeftDockable( false ).RightDockable( false ).Floatable( false ) );
 
-	wxGridBagSizer* gbSizer1;
-	gbSizer1 = new wxGridBagSizer( 0, 0 );
-	gbSizer1->SetFlexibleDirection( wxBOTH );
-	gbSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	wxBoxSizer* bSizer5;
+	bSizer5 = new wxBoxSizer( wxHORIZONTAL );
 
-	gbSizer1->SetMinSize( wxSize( 300,300 ) );
 	m_bpButtonQrCode = new wxBitmapButton( m_panel_info, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 150,150 ), wxBU_AUTODRAW|0 );
 	m_bpButtonQrCode->SetMinSize( wxSize( 150,150 ) );
 
-	gbSizer1->Add( m_bpButtonQrCode, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	bSizer5->Add( m_bpButtonQrCode, 0, wxALL|wxEXPAND, 5 );
+
+	m_dataViewListCtrl_History = new wxDataViewListCtrl( m_panel_info, wxID_ANY, wxDefaultPosition, wxSize( 450,-1 ), 0 );
+	m_dataViewListColumn_History_TimeStamp = m_dataViewListCtrl_History->AppendTextColumn( wxT("时间戳"), wxDATAVIEW_CELL_INERT, 200, static_cast<wxAlignment>(wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL), 0 );
+	m_dataViewListColumn_History_TimeStamp->GetRenderer()->EnableEllipsize( wxELLIPSIZE_NONE );
+	m_dataViewListColumn_History_Mac = m_dataViewListCtrl_History->AppendTextColumn( wxT("Mac"), wxDATAVIEW_CELL_INERT, 200, static_cast<wxAlignment>(wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL), wxDATAVIEW_COL_RESIZABLE );
+	m_dataViewListColumn_History_Date = m_dataViewListCtrl_History->AppendTextColumn( wxT("日期"), wxDATAVIEW_CELL_INERT, 200, static_cast<wxAlignment>(wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL), 0 );
+	bSizer5->Add( m_dataViewListCtrl_History, 1, wxALL|wxEXPAND, 5 );
 
 
-	m_panel_info->SetSizer( gbSizer1 );
+	m_panel_info->SetSizer( bSizer5 );
 	m_panel_info->Layout();
 
 	m_mgr.Update();

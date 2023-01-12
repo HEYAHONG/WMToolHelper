@@ -350,7 +350,9 @@ void WMToolHelperDialog::OnRefreshTimer( wxTimerEvent& event )
                 wxString flashprocesslog;
                 while(wxProcess::Exists(flashprocess_pid) && input->CanRead())
                 {
-                    char i=(char)input->GetC();
+                    int C=input->GetC();
+                    OnSubProcessStdout(C);
+                    char i=(char)C;
                     if(debug_type=="str")
                     {
                         if(i=='\r')
@@ -503,4 +505,93 @@ void WMToolHelperDialog::SetButtonQrCode(wxString str)
 {
     m_bpButtonQrCode->SetBitmap(GetQrCode(str));
     m_bpButtonQrCode->SetLabel(str);
+}
+
+void WMToolHelperDialog::AddMacHistory(wxString mac)
+{
+    wxVector<wxVariant> data;
+    time_t now=time(NULL);
+    data.push_back( wxVariant(wxString(std::to_string(now))) );
+    data.push_back( wxVariant(mac) );
+    data.push_back( wxVariant(wxString(asctime(localtime(&now)))) );
+    m_dataViewListCtrl_History->InsertItem(0,data );
+}
+
+void WMToolHelperDialog::OnSubProcessStdout(int C)
+{
+    //子线程标准输出(一般用于在标准输出中查找信息)
+    bool iseol=false;//是否为行结束符
+    if(C == '\n' || C == '\r')
+    {
+        iseol=true;
+    }
+
+    if(isalnum((char)C))
+    {
+        //是字母或数字
+        {
+            //在标准输出中查找mac字串
+            static int8_t ismacstart=-1;
+            static std::string macstr;
+
+            if(iseol)
+            {
+               ismacstart=-1;
+               macstr.clear();
+            }
+
+            if(ismacstart==3)
+            {
+                //当mac三个字符均匹配后，后面的字母数字均为mac地址
+                macstr+=(char)C;
+            }
+
+            //匹配字符
+            if(ismacstart==-1 && (C == 'm'|| C== 'M'))
+            {
+                ismacstart=1;
+            }
+            if(ismacstart==1 && (C == 'a'|| C== 'A'))
+            {
+                ismacstart=2;
+            }
+            if(ismacstart==2 && (C == 'c'|| C== 'C'))
+            {
+                ismacstart=3;
+            }
+
+
+            if(macstr.length()>=12)
+            {
+                //mac字符串结束
+                ismacstart=-1;
+                bool ismac=true;
+                {
+                    //检查是否为合法mac字符串
+                    for(size_t i=0;i<macstr.length();i++)
+                    {
+                        char C=macstr.c_str()[i];
+                        if(isalpha(C))
+                        {
+                            char c=tolower(C);
+                            if(c>'f')
+                            {
+                                ismac=false;
+                                macstr.clear();
+                            }
+                        }
+                    }
+                }
+                if(!macstr.empty())
+                {
+                    //处理mac字符串
+                    SetButtonQrCode(wxString::FromAscii(macstr.c_str()));
+                    AddMacHistory(wxString::FromAscii(macstr.c_str()));
+                }
+                macstr.clear();
+            }
+
+        }
+    }
+
 }

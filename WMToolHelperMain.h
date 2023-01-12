@@ -17,6 +17,7 @@
 #include <wx/stdpaths.h>
 #include <wx/bitmap.h>
 #include <wx/dcmemory.h>
+#include <string>
 
 #include "GUIDialog.h"
 #include "time.h"
@@ -55,5 +56,7 @@ private:
     wxStandardPaths &paths;
 
     void SetButtonQrCode(wxString str);
+    void AddMacHistory(wxString mac);
+    void OnSubProcessStdout(int C);
 };
 #endif // WMTOOLHELPERMAIN_H
