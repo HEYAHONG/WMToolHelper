@@ -81,7 +81,7 @@ target_link_libraries(${PROJECT_NAME} qrencode)
 target_include_directories(${PROJECT_NAME} PUBLIC 3rdparty/libqrencode)
 
 #RC资源文件（非Windows专用），可存储少量数据
-add_subdirectory(rc EXCLUDE_FROM_ALL SYSTEM)
+add_subdirectory(rc EXCLUDE_FROM_ALL)
 target_link_libraries(${PROJECT_NAME} RC)
 
 #安装
