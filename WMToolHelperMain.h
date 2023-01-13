@@ -17,6 +17,7 @@
 #include <wx/stdpaths.h>
 #include <wx/bitmap.h>
 #include <wx/dcmemory.h>
+#include <wx/file.h>
 #include <string>
 
 #include "GUIDialog.h"
@@ -53,10 +54,13 @@ private:
     FlashProcess *flashprocess;
     long      flashprocess_pid;
     time_t    retry_timestamp;//重试时间戳
-    wxStandardPaths &paths;
+    wxStandardPaths &paths;//程序路径
+    wxFile          MacHistory;//Mac地址历史
+    wxString ProcessDir;//本进程数据存储目录
 
     void SetButtonQrCode(wxString str);
     void AddMacHistory(wxString mac);
     void OnSubProcessStdout(int C);
+
 };
 #endif // WMTOOLHELPERMAIN_H

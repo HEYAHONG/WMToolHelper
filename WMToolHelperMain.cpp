@@ -21,6 +21,7 @@
 #include <wx/arrstr.h>
 #include <wx/utils.h>
 #include <wx/clipbrd.h>
+#include <wx/dir.h>
 
 class FlashProcess:public wxProcess
 {
@@ -95,8 +96,32 @@ WMToolHelperDialog::WMToolHelperDialog(wxDialog *dlg)
         }
     }
 
-    //打印用户数据目录
-    wxLogMessage(_T("用户数据文件目录:%s"),paths.GetUserDataDir());
+    //用户数据目录
+    {
+        wxLogMessage(_T("用户数据文件目录:%s"),paths.GetUserDataDir());
+        if(!wxDir::Exists(paths.GetUserDataDir()))
+        {
+            wxDir::Make(paths.GetUserDataDir());
+        }
+
+        ProcessDir=paths.GetUserDataDir()+_T("/")+std::to_string(wxGetProcessId());
+        ProcessDir.Replace(_T("\\"),_T("/"));
+        if(!wxDir::Exists(ProcessDir))
+        {
+            wxDir::Make(ProcessDir);
+        }
+
+        {
+            //初始化数据文件
+            wxString MacHistoryPath=ProcessDir+_T("/MacHistoy.csv");
+            MacHistory.Open(MacHistoryPath,wxFile::write_append);
+            if(MacHistory.IsOpened())
+            {
+                wxLogMessage(_T("Mac地址历史记录文件:%s"),MacHistoryPath);
+            }
+
+        }
+    }
 
     {
         //检测wm_tool是否存在
@@ -513,8 +538,35 @@ void WMToolHelperDialog::AddMacHistory(wxString mac)
     time_t now=time(NULL);
     data.push_back( wxVariant(wxString(std::to_string(now))) );
     data.push_back( wxVariant(mac) );
-    data.push_back( wxVariant(wxString(asctime(localtime(&now)))) );
-    m_dataViewListCtrl_History->InsertItem(0,data );
+    wxString Date=wxString(asctime(localtime(&now)));
+    Date.Replace("\n","");
+    Date.Replace("\r","");
+    data.push_back( wxVariant(Date));
+
+    {
+        //写历史表
+        m_dataViewListCtrl_History->InsertItem(0,data );
+    }
+
+    {
+        //写历史记录文件
+        wxString MacHistoryLine;
+        for(auto it=data.begin(); it!=data.end(); it++)
+        {
+            MacHistoryLine+=wxString((*it))+",";
+        }
+        //末尾替换换行符
+        MacHistoryLine=MacHistoryLine.replace(MacHistoryLine.length()-1,1,"\n");
+
+        MacHistory.Write(MacHistoryLine);
+        MacHistory.Flush();
+    }
+
+    {
+        //保存mac地址二维码
+        wxBitmap qrcode=GetQrCode(mac);
+        qrcode.SaveFile(ProcessDir+"/"+mac+".png",wxBITMAP_TYPE_PNG);
+    }
 }
 
 void WMToolHelperDialog::OnSubProcessStdout(int C)
@@ -536,8 +588,8 @@ void WMToolHelperDialog::OnSubProcessStdout(int C)
 
             if(iseol)
             {
-               ismacstart=-1;
-               macstr.clear();
+                ismacstart=-1;
+                macstr.clear();
             }
 
             if(ismacstart==3)
@@ -568,7 +620,7 @@ void WMToolHelperDialog::OnSubProcessStdout(int C)
                 bool ismac=true;
                 {
                     //检查是否为合法mac字符串
-                    for(size_t i=0;i<macstr.length();i++)
+                    for(size_t i=0; i<macstr.length(); i++)
                     {
                         char C=macstr.c_str()[i];
                         if(isalpha(C))
