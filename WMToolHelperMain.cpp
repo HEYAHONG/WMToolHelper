@@ -52,6 +52,14 @@ WMToolHelperDialog::WMToolHelperDialog(wxDialog *dlg)
 
 
     SetButtonQrCode(_T("WMToolHelper"));
+    {
+        //显示说明
+        const char *readme="ReadMe.txt";
+        if(wxRCGetSize(readme))
+        {
+            m_textCtrl_log->AppendText(wxString::FromUTF8((char *)wxRCGetHandle(readme),wxRCGetSize(readme)));
+        }
+    }
 
     wxLog::EnableLogging(true);
     {
@@ -59,6 +67,8 @@ WMToolHelperDialog::WMToolHelperDialog(wxDialog *dlg)
         wxLogTextCtrl *logger=new wxLogTextCtrl(m_textCtrl_log);
         wxLog::SetActiveTarget(logger);
     }
+
+
 
     {
         //设置环境变量

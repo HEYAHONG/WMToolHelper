@@ -23,6 +23,7 @@
 #include "GUIDialog.h"
 #include "time.h"
 #include "qrencode.h"
+#include "wxrc.h"
 
 class FlashProcess;
 

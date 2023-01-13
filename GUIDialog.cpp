@@ -33,7 +33,7 @@ GUIDialog::GUIDialog( wxWindow* parent, wxWindowID id, const wxString& title, co
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 
-	m_textCtrl_log = new wxTextCtrl( m_panel_center, wxID_ANY, wxT("WMToolHelper说明:\n\t串口      --->烧写芯片使用的串口号。\n\t烧写速率--->烧写芯片使用的速率。\n\t复位方式--->复位使用的方式。none=手动,at=使用AT指令,rts=使用串口的rts引脚。\n\t固件路径--->待烧写的固件路径。\n\t擦除操作--->是否擦除，通常不擦除会烧写失败。\n\t调试速率--->烧写完成后,是否进行串口调试。不需要调试时烧录完成后将自动退出。当调试速率不正确时，不启用调试功能。\n\t调试格式--->调试数据显示的格式。str=字符串,hex=16进制格式,nodebug=不启用调试，putty=使用putty调试。\n\t操作      --->使用官方工具进行烧录操作。\n\t重试烧录--->单次烧录完成后是否重试烧录,启用调试操作时无效。异常退出=当烧录失败后重试烧录，正常退出=当烧录成功后重试烧录。\n\tMac历史--->查看保存至本地的烧录历史\n"), wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxTE_MULTILINE|wxTE_READONLY );
+	m_textCtrl_log = new wxTextCtrl( m_panel_center, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxTE_MULTILINE|wxTE_READONLY );
 	bSizer1->Add( m_textCtrl_log, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 

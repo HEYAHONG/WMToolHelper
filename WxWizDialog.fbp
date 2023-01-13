@@ -171,7 +171,7 @@
                             <property name="validator_style">wxFILTER_NONE</property>
                             <property name="validator_type">wxDefaultValidator</property>
                             <property name="validator_variable"></property>
-                            <property name="value">WMToolHelper说明:&#x0A;&#x09;串口      ---&gt;烧写芯片使用的串口号。&#x0A;&#x09;烧写速率---&gt;烧写芯片使用的速率。&#x0A;&#x09;复位方式---&gt;复位使用的方式。none=手动,at=使用AT指令,rts=使用串口的rts引脚。&#x0A;&#x09;固件路径---&gt;待烧写的固件路径。&#x0A;&#x09;擦除操作---&gt;是否擦除，通常不擦除会烧写失败。&#x0A;&#x09;调试速率---&gt;烧写完成后,是否进行串口调试。不需要调试时烧录完成后将自动退出。当调试速率不正确时，不启用调试功能。&#x0A;&#x09;调试格式---&gt;调试数据显示的格式。str=字符串,hex=16进制格式,nodebug=不启用调试，putty=使用putty调试。&#x0A;&#x09;操作      ---&gt;使用官方工具进行烧录操作。&#x0A;&#x09;重试烧录---&gt;单次烧录完成后是否重试烧录,启用调试操作时无效。异常退出=当烧录失败后重试烧录，正常退出=当烧录成功后重试烧录。&#x0A;&#x09;Mac历史---&gt;查看保存至本地的烧录历史&#x0A;</property>
+                            <property name="value"></property>
                             <property name="window_extra_style"></property>
                             <property name="window_name"></property>
                             <property name="window_style"></property>
