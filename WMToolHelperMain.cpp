@@ -22,6 +22,7 @@
 #include <wx/utils.h>
 #include <wx/clipbrd.h>
 #include <wx/dir.h>
+#include <wx/utils.h>
 
 class FlashProcess:public wxProcess
 {
@@ -470,6 +471,12 @@ void WMToolHelperDialog::OnbpButtonQrCodeClick( wxCommandEvent& event )
         wxTheClipboard->SetData(new wxTextDataObject(m_bpButtonQrCode->GetLabel()));
         wxTheClipboard->Close();
     }
+}
+
+void WMToolHelperDialog::OnButtonHistory( wxCommandEvent& event )
+{
+    //以默认浏览器打开目录
+    wxLaunchDefaultBrowser(ProcessDir);
 }
 
 void WMToolHelperDialog::OnClose(wxCloseEvent &event)

@@ -43,6 +43,7 @@ protected:
     virtual void OnButtonStart( wxCommandEvent& event );
     virtual void OnButtonStop( wxCommandEvent& event );
     virtual void OnbpButtonQrCodeClick( wxCommandEvent& event );
+    virtual void OnButtonHistory( wxCommandEvent& event );
 
 
 private:

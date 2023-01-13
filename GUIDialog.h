@@ -71,6 +71,8 @@ class GUIDialog : public wxDialog
 		wxStaticText* m_staticText_retry;
 		wxCheckBox* m_checkBox_FlashProgressExitAbnormal;
 		wxCheckBox* m_checkBox_FlashProgressExitNormal;
+		wxStaticText* m_staticText10;
+		wxButton* m_button_history;
 		wxTimer m_timer_refresh;
 		wxPanel* m_panel_info;
 		wxBitmapButton* m_bpButtonQrCode;
@@ -84,6 +86,7 @@ class GUIDialog : public wxDialog
 		virtual void OnButtonRefreshCom( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonStart( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonStop( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonHistory( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnRefreshTimer( wxTimerEvent& event ) { event.Skip(); }
 		virtual void OnbpButtonQrCodeClick( wxCommandEvent& event ) { event.Skip(); }
 
