@@ -19,8 +19,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 set(CMAKE_THREAD_PREFER_PTHREAD ON)
 find_package(Threads)
-find_package(PNG)
-find_package(ICONV)
+#find_package(PNG)
+#find_package(ICONV)
 
 if(CMAKE_USE_PTHREADS_INIT)
     add_definitions(-DHAVE_LIBPTHREAD=1)
