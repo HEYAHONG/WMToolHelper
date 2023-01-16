@@ -699,7 +699,7 @@ void WMToolHelperDialog::OnCleanupFile()
                     {
                         wxFileOutputStream filestream(file);
                         //保存zip文件
-                        wxZipOutputStream zip(&filestream);
+                        wxZipOutputStream zip(filestream);
                         wxArrayString filelist;
                         if(dir.GetAllFiles(ProcessDir,&filelist))
                         {
@@ -732,6 +732,9 @@ void WMToolHelperDialog::OnCleanupFile()
 
                             }
                         }
+
+                        zip.Close();
+                        filestream.Close();
 
                     }
 
