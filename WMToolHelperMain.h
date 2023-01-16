@@ -64,5 +64,8 @@ private:
     void AddMacHistory(wxString mac);
     void OnSubProcessStdout(int C);
 
+    //清理文件
+    void OnCleanupFile();
+
 };
 #endif // WMTOOLHELPERMAIN_H

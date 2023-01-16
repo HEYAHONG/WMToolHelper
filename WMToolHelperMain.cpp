@@ -23,6 +23,8 @@
 #include <wx/clipbrd.h>
 #include <wx/dir.h>
 #include <wx/utils.h>
+#include <wx/zipstrm.h>
+#include <wx/wfstream.h>
 
 class FlashProcess:public wxProcess
 {
@@ -168,6 +170,7 @@ WMToolHelperDialog::WMToolHelperDialog(wxDialog *dlg)
 
 WMToolHelperDialog::~WMToolHelperDialog()
 {
+    OnCleanupFile();
     wxLog::SetActiveTarget(NULL);
 }
 
@@ -663,4 +666,84 @@ void WMToolHelperDialog::OnSubProcessStdout(int C)
         }
     }
 
+}
+
+void WMToolHelperDialog::OnCleanupFile()
+{
+    //清理文件(进程目录)，通常退出时调用
+    if(m_dataViewListCtrl_History->GetItemCount() <= 0)
+    {
+        wxLogMessage(_T("无历史文件，直接删除进程目录!"));
+        //清理文件
+        if(MacHistory.IsOpened())
+        {
+            MacHistory.Close();
+        }
+        wxDir::Remove(ProcessDir,wxPATH_RMDIR_RECURSIVE);
+    }
+    else
+    {
+        wxLogMessage(_T("存在历史文件，提示保存!"));
+        {
+
+            wxMessageDialog msgdlg(this,_T("是否保存历史文件"),_T("提示"),wxCENTER|wxYES_NO);
+            if(wxID_YES==msgdlg.ShowModal())
+            {
+                wxFileDialog dlg(this,_T("保存文件:"),"","","Zip files (*.zip)|*.zip",wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
+                if(wxID_OK==dlg.ShowModal())
+                {
+                    wxDir dir(ProcessDir);
+                    wxFile file;
+                    file.Open(dlg.GetPath(),wxFile::write);
+                    if(file.IsOpened() && dir.IsOpened())
+                    {
+                        wxFileOutputStream filestream(file);
+                        //保存zip文件
+                        wxZipOutputStream zip(&filestream);
+                        wxArrayString filelist;
+                        if(dir.GetAllFiles(ProcessDir,&filelist))
+                        {
+                            for(auto it=filelist.begin(); it!=filelist.end(); it++)
+                            {
+                                //处理文件路径与文件名
+                                wxString filepath=(*it);
+                                filepath.Replace("\\","/");
+                                wxString filename=filepath.substr(ProcessDir.length());
+                                while(filename.Find("/")==0)
+                                {
+                                    filename=filename.substr(1);
+                                }
+
+                                wxLogMessage(_T("文件路径:%s,文件名:%s"),filepath,filename);
+
+                                wxFile subfile;
+                                subfile.Open(filepath);
+                                if(subfile.IsOpened())
+                                {
+                                    {
+                                        //创建子文件
+                                        zip.PutNextEntry(filename);
+                                        wxFileInputStream input(subfile.fd());
+                                        //输出子文件内容到zip文件
+                                        zip<<input;
+                                    }
+                                    subfile.Close();
+                                }
+
+                            }
+                        }
+
+                    }
+
+                }
+            }
+        }
+
+        //清理文件
+        if(MacHistory.IsOpened())
+        {
+            MacHistory.Close();
+        }
+        wxDir::Remove(ProcessDir,wxPATH_RMDIR_RECURSIVE);
+    }
 }
