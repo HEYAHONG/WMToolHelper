@@ -2073,6 +2073,17 @@
                                 <property name="type">Text</property>
                                 <property name="width">200</property>
                             </object>
+                            <object class="dataViewListColumn" expanded="0">
+                                <property name="align">wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</property>
+                                <property name="ellipsize"></property>
+                                <property name="flags">wxDATAVIEW_COL_RESIZABLE</property>
+                                <property name="label">错误代码</property>
+                                <property name="mode">wxDATAVIEW_CELL_INERT</property>
+                                <property name="name">m_dataViewListColumn_ErrorCode</property>
+                                <property name="permission">protected</property>
+                                <property name="type">Text</property>
+                                <property name="width">200</property>
+                            </object>
                         </object>
                     </object>
                 </object>

@@ -25,11 +25,13 @@
 #include <wx/utils.h>
 #include <wx/zipstrm.h>
 #include <wx/wfstream.h>
+#include <functional>
 
 class FlashProcess:public wxProcess
 {
     WMToolHelperDialog &parent;
     int ExitCode;
+    std::function<void(FlashProcess &)> OnExit;
 public:
     FlashProcess(WMToolHelperDialog &_parent):parent(_parent)
     {
@@ -39,10 +41,18 @@ public:
     {
         return ExitCode;
     }
+    void SetOnExit( std::function<void(FlashProcess &)> func)
+    {
+        OnExit=func;
+    }
 protected:
     virtual void OnTerminate(int  pid,int status)
     {
         ExitCode=status;
+        if(OnExit!=NULL)
+        {
+            OnExit(*this);
+        }
         wxLogMessage(_T("烧录进程%d已停止,退出代码:%d"),pid,status);
     }
 
@@ -403,6 +413,10 @@ void WMToolHelperDialog::OnButtonStart( wxCommandEvent& event )
 
 void WMToolHelperDialog::OnRefreshTimer( wxTimerEvent& event )
 {
+    //刷新UI
+    ProcessUIEvent();
+
+    //处理FlashProcess
     if(flashprocess!=NULL)
     {
         wxString debug_type=m_choice_debugtype->GetString(m_choice_debugtype->GetSelection());
@@ -579,38 +593,49 @@ void WMToolHelperDialog::SetButtonQrCode(wxString str)
 
 void WMToolHelperDialog::AddMacHistory(wxString mac)
 {
-    wxVector<wxVariant> data;
-    time_t now=time(NULL);
-    data.push_back( wxVariant(wxString(std::to_string(now))) );
-    data.push_back( wxVariant(mac) );
-    wxString Date=wxString(asctime(localtime(&now)));
-    Date.Replace("\n","");
-    Date.Replace("\r","");
-    data.push_back( wxVariant(Date));
-
+    auto ProcessExit=[=](FlashProcess &process)
     {
-        //写历史表
-        m_dataViewListCtrl_History->InsertItem(0,data );
-    }
-
-    {
-        //写历史记录文件
-        wxString MacHistoryLine;
-        for(auto it=data.begin(); it!=data.end(); it++)
+        wxVector<wxVariant> data;
+        time_t now=time(NULL);
+        data.push_back( wxVariant(wxString(std::to_string(now))) );
+        data.push_back( wxVariant(mac) );
+        wxString Date=wxString(asctime(localtime(&now)));
+        Date.Replace("\n","");
+        Date.Replace("\r","");
+        data.push_back( wxVariant(Date));
+        data.push_back(wxVariant(std::to_string(process.GetExitCode())));
+        auto UpdateUI=[=]()
         {
-            MacHistoryLine+=wxString((*it))+",";
-        }
-        //末尾替换换行符
-        MacHistoryLine=MacHistoryLine.replace(MacHistoryLine.length()-1,1,"\n");
+            {
+                //写历史表
+                m_dataViewListCtrl_History->InsertItem(0,data );
+            }
 
-        MacHistory.Write(MacHistoryLine);
-        MacHistory.Flush();
-    }
+            {
+                //写历史记录文件
+                wxString MacHistoryLine;
+                for(auto it=data.begin(); it!=data.end(); it++)
+                {
+                    MacHistoryLine+=wxString((*it))+",";
+                }
+                //末尾替换换行符
+                MacHistoryLine=MacHistoryLine.replace(MacHistoryLine.length()-1,1,"\n");
 
+                MacHistory.Write(MacHistoryLine);
+                MacHistory.Flush();
+            }
+
+            {
+                //保存mac地址二维码
+                wxBitmap qrcode=GetQrCode(mac);
+                qrcode.SaveFile(ProcessDir+"/"+mac+".png",wxBITMAP_TYPE_PNG);
+            }
+        };
+        AddUIEvent(UpdateUI);
+    };
+    if(flashprocess!=NULL)
     {
-        //保存mac地址二维码
-        wxBitmap qrcode=GetQrCode(mac);
-        qrcode.SaveFile(ProcessDir+"/"+mac+".png",wxBITMAP_TYPE_PNG);
+        flashprocess->SetOnExit(ProcessExit);
     }
 }
 

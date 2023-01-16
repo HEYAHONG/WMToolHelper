@@ -80,6 +80,7 @@ class GUIDialog : public wxDialog
 		wxDataViewColumn* m_dataViewListColumn_History_TimeStamp;
 		wxDataViewColumn* m_dataViewListColumn_History_Mac;
 		wxDataViewColumn* m_dataViewListColumn_History_Date;
+		wxDataViewColumn* m_dataViewListColumn_ErrorCode;
 
 		// Virtual event handlers, override them in your derived class
 		virtual void OnClose( wxCloseEvent& event ) { event.Skip(); }

@@ -24,6 +24,9 @@
 #include "time.h"
 #include "qrencode.h"
 #include "wxrc.h"
+#include <mutex>
+#include <functional>
+#include <queue>
 
 class FlashProcess;
 
@@ -66,6 +69,30 @@ private:
 
     //清理文件
     void OnCleanupFile();
+
+
+    //UI刷新函数队列(其它线程的函数转发至队列执行)
+    std::queue<std::function<void()>> UIEvent;
+    std::mutex UIEventLock;
+    void ProcessUIEvent()
+    {
+        std::lock_guard<std::mutex> lock(UIEventLock);
+        while(UIEvent.size()>0)
+        {
+           std::function<void()> cb=UIEvent.front();
+           UIEvent.pop();
+           if(cb!=NULL)
+           {
+               cb();
+           }
+        }
+    };
+public:
+    void AddUIEvent(std::function<void()> cb)
+    {
+        std::lock_guard<std::mutex> lock(UIEventLock);
+        UIEvent.push(cb);
+    };
 
 };
 #endif // WMTOOLHELPERMAIN_H

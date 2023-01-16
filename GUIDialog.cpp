@@ -210,6 +210,7 @@ GUIDialog::GUIDialog( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_dataViewListColumn_History_TimeStamp->GetRenderer()->EnableEllipsize( wxELLIPSIZE_NONE );
 	m_dataViewListColumn_History_Mac = m_dataViewListCtrl_History->AppendTextColumn( wxT("Mac"), wxDATAVIEW_CELL_INERT, 200, static_cast<wxAlignment>(wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL), wxDATAVIEW_COL_RESIZABLE );
 	m_dataViewListColumn_History_Date = m_dataViewListCtrl_History->AppendTextColumn( wxT("日期"), wxDATAVIEW_CELL_INERT, 200, static_cast<wxAlignment>(wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL), 0 );
+	m_dataViewListColumn_ErrorCode = m_dataViewListCtrl_History->AppendTextColumn( wxT("错误代码"), wxDATAVIEW_CELL_INERT, 200, static_cast<wxAlignment>(wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL), wxDATAVIEW_COL_RESIZABLE );
 	bSizer5->Add( m_dataViewListCtrl_History, 1, wxALL|wxEXPAND, 5 );
 
 
