@@ -67,7 +67,11 @@ WMToolHelperDialog::WMToolHelperDialog(wxDialog *dlg)
     {
         //设置日志窗口
         wxLogTextCtrl *logger=new wxLogTextCtrl(m_textCtrl_log);
-        wxLog::SetActiveTarget(logger);
+        wxLog *oldlog=wxLog::SetActiveTarget(logger);
+        if(oldlog!=NULL)
+        {
+            delete oldlog;
+        }
     }
 
 
@@ -171,7 +175,28 @@ WMToolHelperDialog::WMToolHelperDialog(wxDialog *dlg)
 WMToolHelperDialog::~WMToolHelperDialog()
 {
     OnCleanupFile();
-    wxLog::SetActiveTarget(NULL);
+    {
+        wxLog::DontCreateOnDemand();
+        wxLog *log=wxLog::SetActiveTarget(new wxLogStderr);
+        if(log!=NULL)
+        {
+            wxLogChain *chain=NULL;
+            do
+            {
+                chain=dynamic_cast<wxLogChain *>(log);
+                if(chain!=NULL)
+                {
+                    log=chain->GetOldLog();
+                    delete chain;
+                }
+            }
+            while(chain!=NULL);
+            if(log!=NULL)
+            {
+                delete log;
+            }
+        }
+    }
 }
 
 bool WMToolHelperDialog::FindExecutable(wxString name)
