@@ -27,6 +27,11 @@
 #include <mutex>
 #include <functional>
 #include <queue>
+#include <string>
+#ifdef STATIC
+#define PCRE2_STATIC
+#endif // STATIC
+#include <pcre2posix.h>
 
 class FlashProcess;
 
@@ -65,6 +70,9 @@ private:
 
     void SetButtonQrCode(wxString str);
     void AddMacHistory(wxString mac);
+
+
+    std::string stdoutline;//标准输出(行)
     void OnSubProcessStdout(int C);
 
     //清理文件
@@ -79,12 +87,12 @@ private:
         std::lock_guard<std::mutex> lock(UIEventLock);
         while(UIEvent.size()>0)
         {
-           std::function<void()> cb=UIEvent.front();
-           UIEvent.pop();
-           if(cb!=NULL)
-           {
-               cb();
-           }
+            std::function<void()> cb=UIEvent.front();
+            UIEvent.pop();
+            if(cb!=NULL)
+            {
+                cb();
+            }
         }
     };
 public:

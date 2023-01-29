@@ -17,6 +17,7 @@ sudo adduser `id -nu` dialout
 ## 依赖库
 
 - [wxWidgets](http://wxwidgets.org/)
+- [pcre](http://www.pcre.org)
 
 
 

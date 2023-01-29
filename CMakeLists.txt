@@ -41,6 +41,7 @@ if(STATIC_BUILD)
 	if(NOT MSVC)
 		set(MAIN_LIBS "${MAIN_LIBS} -static")
 	endif()
+	add_definitions(-DSTATIC)
 endif()
 
 
@@ -58,6 +59,17 @@ else()
 	add_executable(${PROJECT_NAME} ${MAIN_SRCS})
 endif()
 target_link_libraries(${PROJECT_NAME} ${MAIN_LIBS})
+
+#使用pkgconfig
+include(FindPkgConfig)
+
+#添加pcre2posix库
+pkg_check_modules(LIBPCRE2POSIX REQUIRED IMPORTED_TARGET libpcre2-posix )
+target_link_libraries(${PROJECT_NAME} PkgConfig::LIBPCRE2POSIX)
+
+#添加pcre2-8库
+pkg_check_modules(LIBPCRE2_8 REQUIRED IMPORTED_TARGET libpcre2-8 )
+target_link_libraries(${PROJECT_NAME} PkgConfig::LIBPCRE2_8)
 
 #添加线程库
 FIND_PACKAGE(Threads REQUIRED)
@@ -133,7 +145,7 @@ set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "WMToolHelper By HYH")
 set(CPACK_PACKAGE_DESCRIPTION "WMToolHelper By HYH")
 set(CPACK_PACKAGE_CONTACT    "2229388563@qq.com")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER    "HEYAHONG")
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "libwxgtk3.0-gtk3-0v5 (>=3.0.5.0),putty (>=0.70)")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libwxgtk3.0-gtk3-0v5 (>=3.0.5.0),putty (>=0.70),libpcre2-posix2 (>=10.34)")
 set(CPACK_DEBIAN_PACKAGE_SECTION "System;X11")
 set(CPACK_DEBIAN_PACKAGE_PRIORITY "Optional")
 set(CPACK_GENERATOR "DEB")

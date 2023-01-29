@@ -647,74 +647,44 @@ void WMToolHelperDialog::OnSubProcessStdout(int C)
     {
         iseol=true;
     }
-
-    if(isalnum((char)C))
+    else
     {
-        //是字母或数字
+        if(C>0)
         {
-            //在标准输出中查找mac字串
-            static int8_t ismacstart=-1;
-            static std::string macstr;
-
-            if(iseol)
-            {
-                ismacstart=-1;
-                macstr.clear();
-            }
-
-            if(ismacstart==3)
-            {
-                //当mac三个字符均匹配后，后面的字母数字均为mac地址
-                macstr+=(char)C;
-            }
-
-            //匹配字符
-            if(ismacstart==-1 && (C == 'm'|| C== 'M'))
-            {
-                ismacstart=1;
-            }
-            if(ismacstart==1 && (C == 'a'|| C== 'A'))
-            {
-                ismacstart=2;
-            }
-            if(ismacstart==2 && (C == 'c'|| C== 'C'))
-            {
-                ismacstart=3;
-            }
-
-
-            if(macstr.length()>=12)
-            {
-                //mac字符串结束
-                ismacstart=-1;
-                bool ismac=true;
-                {
-                    //检查是否为合法mac字符串
-                    for(size_t i=0; i<macstr.length(); i++)
-                    {
-                        char C=macstr.c_str()[i];
-                        if(isalpha(C))
-                        {
-                            char c=tolower(C);
-                            if(c>'f')
-                            {
-                                ismac=false;
-                                macstr.clear();
-                            }
-                        }
-                    }
-                }
-                if(!macstr.empty())
-                {
-                    //处理mac字符串
-                    SetButtonQrCode(wxString::FromAscii(macstr.c_str()));
-                    AddMacHistory(wxString::FromAscii(macstr.c_str()));
-                }
-                macstr.clear();
-            }
-
+            stdoutline+=((char)C);
         }
     }
+
+
+    if(iseol)
+    {
+        //使用正则表达式查找mac地址(形如AA-BB-CC-DD-EE-FF)
+        const char *regstr="([0-9]|[a-f]|[A-F]){2}(-([0-9]|[a-f]|[A-F]){2}){5}";
+        regex_t reg= {0};
+        if(regcomp(&reg,regstr,REG_EXTENDED)==0)
+        {
+            regmatch_t match[1];
+            if(regexec(&reg,stdoutline.c_str(),sizeof(match)/sizeof(match[0]),match,0)==0)
+            {
+                if(match[0].rm_eo>match[0].rm_so)
+                {
+                    wxString Mac=wxString::FromUTF8(stdoutline.substr(match[0].rm_so,match[0].rm_eo-match[0].rm_so).c_str());
+                    Mac.Replace("-","");
+                    //处理mac字符串
+                    SetButtonQrCode(Mac);
+                    AddMacHistory(Mac);
+
+                }
+            }
+        }
+        regfree(&reg);
+    }
+
+    if(iseol)
+    {
+        stdoutline.clear();
+    }
+
 
 }
 
