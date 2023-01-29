@@ -2,6 +2,9 @@
 
 cmake_minimum_required(VERSION 3.8)
 
+add_subdirectory(3rdparty/pcre2 EXCLUDE_FROM_ALL)
+add_subdirectory(3rdparty/libqrencode EXCLUDE_FROM_ALL)
+
 #程序名称
 Set(PROJECT_NAME WMToolHelper)
 #主版本
@@ -61,15 +64,13 @@ endif()
 target_link_libraries(${PROJECT_NAME} ${MAIN_LIBS})
 
 #使用pkgconfig
-include(FindPkgConfig)
+#include(FindPkgConfig)
 
 #添加pcre2posix库
-pkg_check_modules(LIBPCRE2POSIX REQUIRED IMPORTED_TARGET libpcre2-posix )
-target_link_libraries(${PROJECT_NAME} PkgConfig::LIBPCRE2POSIX)
-
+target_link_libraries(${PROJECT_NAME} pcre2-posix)
+include_directories(3rdparty/pcre2/src)
 #添加pcre2-8库
-pkg_check_modules(LIBPCRE2_8 REQUIRED IMPORTED_TARGET libpcre2-8 )
-target_link_libraries(${PROJECT_NAME} PkgConfig::LIBPCRE2_8)
+target_link_libraries(${PROJECT_NAME} pcre2-8)
 
 #添加线程库
 FIND_PACKAGE(Threads REQUIRED)
@@ -88,7 +89,6 @@ include(${wxWidgets_USE_FILE})
 target_link_libraries(${PROJECT_NAME} ${wxWidgets_LIBRARIES})
 
 #qrencode库
-add_subdirectory(3rdparty/libqrencode EXCLUDE_FROM_ALL SYSTEM)
 target_link_libraries(${PROJECT_NAME} qrencode)
 target_include_directories(${PROJECT_NAME} PUBLIC 3rdparty/libqrencode)
 

@@ -29,7 +29,9 @@
 #include <queue>
 #include <string>
 #ifdef STATIC
+#ifndef PCRE2_STATIC
 #define PCRE2_STATIC
+#endif
 #endif // STATIC
 #include <pcre2posix.h>
 
