@@ -152,7 +152,19 @@ WMToolHelperDialog::WMToolHelperDialog(wxDialog *dlg)
 
     {
         //检测wm_tool是否存在
-        if(!FindExecutable(_T("wm_tool")))
+        wm_tool_path="";
+        if(FindExecutable(_T("wm_tool")))
+        {
+            wm_tool_path=_T("wm_tool");
+        }
+
+        //若检测到wm600_tool则使用wm600_tool
+        if(FindExecutable(_T("wm600_tool")))
+        {
+            wm_tool_path=_T("wm600_tool");
+        }
+
+        if(wm_tool_path.empty())
         {
             wxMessageBox(_T("未找到wm_tool,请检查安装!"),_T("警告"));
             Close();
@@ -338,7 +350,7 @@ void WMToolHelperDialog::OnButtonStart( wxCommandEvent& event )
         return;
     }
 
-    wxString cmd="wm_tool ";
+    wxString cmd=wm_tool_path+" ";
 
     wxString com=m_comboBox_com->GetStringSelection();
     if(com.empty())

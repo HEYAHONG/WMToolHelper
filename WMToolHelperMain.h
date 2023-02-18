@@ -1,3 +1,6 @@
+#ifndef HEADER_730D9BA91A1DDE62
+#define HEADER_730D9BA91A1DDE62
+
 /***************************************************************
  * Name:      WMToolHelperMain.h
  * Purpose:   Defines Application Frame
@@ -63,6 +66,7 @@ private:
     virtual void OnAbout(wxCommandEvent& event);
     virtual void OnRefreshTimer( wxTimerEvent& event );
 
+    wxString wm_tool_path;
     FlashProcess *flashprocess;
     long      flashprocess_pid;
     time_t    retry_timestamp;//重试时间戳
@@ -106,3 +110,5 @@ public:
 
 };
 #endif // WMTOOLHELPERMAIN_H
+#endif // header guard
+

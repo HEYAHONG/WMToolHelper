@@ -106,19 +106,19 @@ INSTALL(TARGETS ${PROJECT_NAME}
 include(GNUInstallDirs)
 
 if(WIN32)
-INSTALL(FILES win32/wm_tool.exe win32/putty.exe
+INSTALL(FILES win32/wm600_tool.exe win32/putty.exe
        DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 ELSE()
 #添加对wm_tool的编译
-add_executable(wm_tool wm_tool/wm_tool.c)
-target_link_libraries(wm_tool ${MAIN_LIBS} ${CMAKE_THREAD_LIBS_INIT}) 
+add_executable(wm600_tool wm_tool/wm_tool.c)
+target_link_libraries(wm600_tool ${MAIN_LIBS} ${CMAKE_THREAD_LIBS_INIT}) 
 
 #添加对wm_getvar的编译
-add_executable(wm_getver wm_tool/wm_getver.c)
-target_link_libraries(wm_getver ${MAIN_LIBS} ${CMAKE_THREAD_LIBS_INIT})
+add_executable(wm600_getver wm_tool/wm_getver.c)
+target_link_libraries(wm600_getver ${MAIN_LIBS} ${CMAKE_THREAD_LIBS_INIT})
 
-INSTALL(TARGETS wm_getver wm_tool
+INSTALL(TARGETS wm600_getver wm600_tool
        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
