@@ -1,0 +1,3 @@
+[submodule "3rdparty/DeployWin"]
+	path = 3rdparty/DeployWin
+	url = ../../HEYAHONG/DeployWin.git

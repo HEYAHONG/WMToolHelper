@@ -5,6 +5,7 @@ cmake_minimum_required(VERSION 3.8)
 add_subdirectory(3rdparty/pcre2 EXCLUDE_FROM_ALL)
 add_subdirectory(3rdparty/libqrencode EXCLUDE_FROM_ALL)
 
+
 #程序名称
 Set(PROJECT_NAME WMToolHelper)
 #主版本
@@ -72,6 +73,11 @@ include_directories(3rdparty/pcre2/src)
 #添加pcre2-8库
 target_link_libraries(${PROJECT_NAME} pcre2-8)
 
+#enable deploywin
+add_subdirectory(3rdparty/DeployWin)
+deploywin_enable(${PROJECT_NAME})
+deploywin_install(${PROJECT_NAME})
+
 #添加线程库
 FIND_PACKAGE(Threads REQUIRED)
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}  ${CMAKE_THREAD_LIBS_INIT})
@@ -96,12 +102,6 @@ target_include_directories(${PROJECT_NAME} PUBLIC 3rdparty/libqrencode)
 add_subdirectory(rc EXCLUDE_FROM_ALL)
 target_link_libraries(${PROJECT_NAME} RC)
 
-#安装
-INSTALL(TARGETS ${PROJECT_NAME}
-       RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-       LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-       ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-)
 
 include(GNUInstallDirs)
 
