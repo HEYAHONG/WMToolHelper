@@ -628,7 +628,7 @@ void WMToolHelperDialog::AddMacHistory(wxString mac)
                 wxString MacHistoryLine;
                 for(auto it=data.begin(); it!=data.end(); it++)
                 {
-                    MacHistoryLine+=wxString((*it))+",";
+                    MacHistoryLine+=wxString((*it).GetString())+",";
                 }
                 //末尾替换换行符
                 MacHistoryLine=MacHistoryLine.replace(MacHistoryLine.length()-1,1,"\n");
